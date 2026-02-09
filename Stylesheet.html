@@ -1,0 +1,63 @@
+<style>
+    :root { --primary-color: #004d99; --success-color: #28a745; --error-color: #dc3545; }
+    body { font-family: 'Sarabun', sans-serif; background-color: #f4f7f6; margin: 0; padding: 15px; display: flex; justify-content: center; }
+    .container { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+    h3 { color: var(--primary-color); text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+    
+    /* Form Styling */
+    .input-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
+    input[type="text"], input[type="date"], input[type="number"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+    
+    /* Checklist Styling */
+    .checklist-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .options { display: flex; gap: 15px;  margin-top: 20px }
+    .checklist-box { background: #f0f4f8; padding: 20px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99; }
+
+    /* จัดการกล่องที่ครอบ input และหน่วย */
+    .input-with-unit {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
+    /* ปรับแต่งช่อง input */
+    .input-with-unit input {
+        flex: 1; /* ให้ input ขยายเต็มพื้นที่ */
+        padding-right: 50px !important; /* เว้นที่ว่างด้านขวาไม่ให้ตัวเลขทับหน่วย */
+    }
+
+    /* ปรับแต่งตัวอักษรหน่วย */
+    .unit {
+        position: absolute;
+        right: 12px;
+        color: #666;
+        font-size: 14px;
+        pointer-events: none; /* เพื่อให้คลิกทะลุไปที่ input ได้ */
+        font-weight: bold;
+    }       
+
+    /* Canvas Styling (Responsive) */
+    .signature-pad { border: 2px dashed #ccc; border-radius: 8px; background: #fff; margin: 20px 0; touch-action: none; width: 100%; height: 200px; }
+    canvas { width: 100%; height: 100%; cursor: crosshair; }
+    
+    /* Button Styling */
+    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn { padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; }
+    #save { background: var(--success-color); }
+    #clear { background: var(--error-color); }
+    .btn:active { transform: scale(0.98); }
+
+    /* สีเริ่มต้นของ Select ให้เป็นสีเทา (เหมือน Placeholder) */
+    select {
+        color: #757575;
+    }
+
+    /* เมื่อผู้ใช้เลือกค่าแล้ว ให้เปลี่ยนเป็นสีดำปกติ */
+    select:focus, 
+    select:valid {
+        color: #000000;
+    }
+    
+    @media (max-width: 400px) { .container { padding: 15px; } h3 { font-size: 1.2rem; } }
+</style>

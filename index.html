@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ระบบตรวจเช็คตู้ - CHAINARIS</title>
+
+    <?!= include('Stylesheet'); ?>
+
+</head>
+<body>
+    <div class="container">
+        <h3>แบบฟอร์มตรวจเช็ค Controller</h3>
+        <div class="input-group">
+            <label>ชื่อลูกค้า / โครงการ</label>
+            <input type="text" id="project" placeholder="ชื่อโครงการ">
+        </div>
+
+        <div class="input-group">
+            <label>วันที่</label>
+            <input type="date" id="date">
+        </div>
+
+        <div class="input-group">
+            <label>เลขที่แบบ</label>
+            <input type="text" id="fromNo" placeholder="เลขที่แบบ">
+        </div>
+
+        <div class="input-group">
+            <label>เลขที่ BOQ</label>
+            <input type="text" id="boqNo" placeholder="เลขที่ BOQ">
+        </div>
+
+        <div class="input-group">
+            <label>เลขที่สินค้า(กรณีส่งตู้อย่างเดียว)</label>
+            <input type="text" id="productNo" placeholder="เลขที่สินค้า">
+        </div>
+
+        <h3>รายการตรวจสอบ 1</h3>
+
+        <div class="input-group">
+        <label>Pump Type</label>
+          <select id="pump_qty" onchange="generatePumpFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกชนิดปั๊ม</option>
+              <option value="1">ปั๊มแนวนอน</option>            
+              <option value="2">ปั๊มแนวตั้ง</option>
+              <option value="3">ปั๊มหอยโข่ง</option>
+              <option value="4">ปั๊มจุ่ม</option>
+          </select>
+        </div>
+        <div id="pump_container"></div>
+
+        <div class="input-group">
+            <label>Motor Type</label>
+            <input type="text" id="motortype" placeholder="ชนิดมอเตอร์">
+        </div>
+
+        <div class="input-group">
+            <label>Motor (kw)</label>
+            <div class="input-with-unit">
+                <input type="number" id="motorkw" min="0" step="0.01" placeholder="0.00">
+                <span class="unit">kw</span>
+            </div>
+        </div>
+
+         <div class="input-group">
+            <label>Motor Speed</label>
+              <select id="motorspeed_qty" onchange="generateMotorspeedFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+                  <option value="" disabled selected hidden>เลือกความเร็วมอเตอร์</option>
+                  <option value="1">2 pole ~ 3000 rmp</option>            
+                  <option value="2">4 pole ~ 1500 rmp</option>
+                  <option value="3">6 pole ~ 1000 rmp</option>
+              </select>
+        </div>
+        <div id="motorspeed_container"></div>
+
+        <div class="input-group">
+        <label>เบรกเกอร์</label>
+          <select id="breaker_qty" onchange="generateBreakerFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกจำนวน</option>             
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="breaker_container"></div>
+
+        <div class="input-group">
+        <label>มอเตอร์เบรกเกอร์</label>
+          <select id="motor_qty" onchange="generateMotorFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกจำนวน</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="motor_container"></div>
+
+        <div class="input-group">
+        <label>การตรวจสอบ Phase Protection</label>
+          <select id="phase_qty" onchange="generatePhaseFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกการติดตั้ง</option>
+              <option value="1">ติดตั้ง</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="phase_container"></div>
+
+        <div class="input-group">
+        <label>การตรวจสอบ ฟิวส์ + ลูกฟิวส์</label>
+          <select id="fuse_qty" onchange="generateFuseFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกการติดตั้ง</option>
+              <option value="1">ติดตั้ง</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="fuse_container"></div>
+
+        <div class="input-group">
+        <label>การตรวจสอบ แมกเนติก</label>
+          <select id="magnetic_qty" onchange="generateMagneticFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกการติดตั้ง</option>
+              <option value="1">ติดตั้ง</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="magnetic_main_status_container"></div>
+        <div id="magnetic_container"></div>
+
+        <div class="input-group">
+        <label>การตรวจสอบ Overload</label>
+          <select id="ovl_qty" onchange="generateOvlFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกจำนวน</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="ovl_container"></div>
+
+        <div class="input-group">
+        <label>การตรวจสอบ Manual</label>
+          <select id="manual_qty" onchange="generateManualFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกจำนวน</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="manual_container"></div>
+
+        <div class="input-group">
+        <label>การตรวจสอบ Auto</label>
+          <select id="auto_qty" onchange="generateAutoFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกจำนวน</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="auto_container"></div>
+
+        <div class="input-group">
+        <label>การทำงาน Inverter</label>
+          <select id="inverter_qty" onchange="generateInverterFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกการติดตั้ง</option>
+              <option value="1">ติดตั้ง</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="inverter_container"></div>
+
+        <div class="input-group">
+        <label>การตรวจสอบแสดงสถานะหลอด</label>
+          <select id="led_qty" onchange="generateLedFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกการติดตั้ง</option>
+              <option value="1">ติดตั้ง</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="led_container"></div>
+
+        <h3>รายการตรวจสอบ 2</h3>
+        <div class="input-group">
+        <label>การตรวจสอบ Low Level ถังพักทางด้านดูด</label>
+          <select id="lowlv_qty" onchange="generateLowlvFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกการติดตั้ง</option>
+              <option value="1">ติดตั้ง</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="lowlv_container"></div>
+
+        <div class="input-group">
+        <label>การตรวจสอบ High Level ถังพักทางด้านจ่าย</label>
+          <select id="highlv_qty" onchange="generateHighlvFields()" required style="width:100%; padding: 12px; border-radius: 8px; font-size: 16px;">
+              <option value="" disabled selected hidden>เลือกการติดตั้ง</option>
+              <option value="1">ติดตั้ง</option>
+              <option value="0">ไม่ติดตั้ง</option>
+          </select>
+        </div>
+        <div id="highlv_container"></div>
+
+        <h3>สรุปผลการตรวจเช็ค</h3>
+        <div class="input-group">
+            <label>ประเภทของสินค้า</label>
+            <input type="text" id="type_product" placeholder="ประเภทสินค้า">
+        </div>
+
+        <div class ="checklist-box">
+            <label>การแก้ไขแบบ</label>
+            <div class="options">
+                <span>สถานะ :</span>
+                <input type="radio" name="design" value="แก้ไข"> แก้ไข
+                <input type="radio" name="design" value="ไม่แก้ไข"> ไม่แก้ไข
+            </div>
+        </div>
+
+        <div class="checklist-box">
+            <label>ผลการตรวจเช็คตู้</label>
+            <div class="options">
+                <span>สถานะ :</span>
+                <input type="radio" name="status" value="ผ่าน"> ผ่าน
+                <input type="radio" name="status" value="ไม่ผ่าน"> ไม่ผ่าน
+            </div>
+        </div>
+
+        <h3>การตรวจสภาพ</h3>     
+        <div class="checklist-box">
+            <label>สายขันแน่นไม่หลวม</label>
+            <div class="options">
+                <span>สถานะ :</span>
+                <input type="radio" name="check1" value="ผ่าน"> ผ่าน
+                <input type="radio" name="check1" value="ไม่ผ่าน"> ไม่ผ่าน
+            </div>
+        </div>
+
+        <div class="checklist-box">
+            <label>สภาพสีตู้ดี ไม่ถลอก</label>
+            <div class="options">
+                <span>สถานะ :</span>
+                <input type="radio" name="check2" value="ผ่าน"> ผ่าน
+                <input type="radio" name="check2" value="ไม่ผ่าน"> ไม่ผ่าน
+            </div>
+        </div>
+       
+        <div class="checklist-box">
+            <label>อุปกรณ์วางเป็นระเบียบ</label>
+            <div class="options">
+                <span>สถานะ :</span>
+                <input type="radio" name="check3" value="ผ่าน"> ผ่าน
+                <input type="radio" name="check3" value="ไม่ผ่าน"> ไม่ผ่าน
+            </div>
+        </div>
+        
+        <div class="checklist-box">
+            <label>สายไฟเป็นระเบียบ</label>
+            <div class="options">
+                <span>สถานะ :</span>
+                <input type="radio" name="check4" value="ผ่าน"> ผ่าน
+                <input type="radio" name="check4" value="ไม่ผ่าน"> ไม่ผ่าน
+            </div>
+        </div>
+        
+        <div class="checklist-box">
+            <label>ป้ายหน้าตู้ครบ</label>
+            <div class="options">
+                <span>สถานะ :</span>
+                <input type="radio" name="check5" value="ผ่าน"> ผ่าน
+                <input type="radio" name="check5" value="ไม่ผ่าน"> ไม่ผ่าน
+            </div>
+        </div>
+ 
+        <div class="checklist-box">
+            <label>ขนาดสายไฟทุกจุดถูกต้องตามโหลด</label>
+            <div class="options">
+                <span>สถานะ :</span>
+                <input type="radio" name="check6" value="ผ่าน"> ผ่าน
+                <input type="radio" name="check6" value="ไม่ผ่าน"> ไม่ผ่าน
+            </div>
+        </div>
+
+        <h3>รายการเพิ่ม</h3>
+        <div class="input-group">
+            <label>ก้านฟุตเลต</label>
+            <div class="input-with-unit">
+                <input type="number" id="footletrod_count" min="0" placeholder="จำนวน">
+                <span class="unit">ก้าน</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>หัวฟุตเลต</label>
+            <div class="input-with-unit">
+                <input type="number" id="footlethead_count" min="0" placeholder="จำนวน">
+                <span class="unit">หัว</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>ข้อต่อฟุตเลต</label>
+            <div class="input-with-unit">
+                <input type="number" id="footletjoint_count" min="0" placeholder="จำนวน">
+                <span class="unit">ตัว</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>ลูกลอย</label>
+            <div class="input-with-unit">
+                <input type="number" id="float_count" min="0" placeholder="จำนวน">
+                <span class="unit">ลูก</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>ลูกถ้วย</label>
+            <div class="input-with-unit">
+                <input type="number" id="cup_type" min="0" placeholder="รู">
+                <span class="unit"></span>
+
+                <input type="number" id="cup_count" min="0" placeholder="จำนวน">
+                <span class="unit">อัน</span>
+            </div>
+        </div>
+
+        <label style="margin-top:20px;">ลงชื่อตรวจเช็ค (Signature)</label>
+        <div class="signature-pad">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="btn-group">
+            <button id="clear" class="btn">ล้างลายเซ็น</button>
+            <button id="save" class="btn">ส่งข้อมูล</button>
+        </div>
+    </div>
+    <?!= include('JavaScript'); ?>
+</body>
+</html>

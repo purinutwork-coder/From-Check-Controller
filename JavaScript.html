@@ -1,0 +1,635 @@
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    // รายการตรวจสอบ 1
+    // ฟังก์ชันสร้างช่องเบรกเกอร์
+    function generateBreakerFields() {
+        const qty = document.getElementById('breaker_qty').value;
+        const container = document.getElementById('breaker_container');
+        container.innerHTML = ''; 
+        for (let i = 1; i <= qty; i++) {
+            const div = document.createElement('div');
+            div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+            div.innerHTML = `
+                <label style="color:#004d99;">เบรกเกอร์ตัวที่ ${i}</label>
+                <div class="input-group" style="margin-top:10px;">
+                    <input type="number" class="breaker_input_val" min="0" placeholder="ค่า A (เช่น 10)" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span>สถานะ :</span>
+                        <input type="radio" name="breaker_status_${i}" value="ปกติ"> ปกติ
+                        <input type="radio" name="breaker_status_${i}" value="ไม่ปกติ"> ไม่ปกติ
+                    </div>
+                </div>`;
+            container.appendChild(div);
+        }
+    }
+
+    // ฟังก์ชันสร้างช่องมอเตอร์เบรกเกอร์
+    function generateMotorFields() {
+        const qty = document.getElementById('motor_qty').value;
+        const container = document.getElementById('motor_container');
+        container.innerHTML = ''; 
+        for (let i = 1; i <= qty; i++) {
+            const div = document.createElement('div');
+            div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+            div.innerHTML = `
+                <label style="color:#004d99;">มอเตอร์เบรกเกอร์ตัวที่ ${i}</label>
+                <div class="input-group" style="margin-top:10px;">
+                    <input type="number" class="motor_input_val" min="0" placeholder="ค่า A (เช่น 10)" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span>สถานะ :</span>
+                        <input type="radio" name="motor_status_${i}" value="ปกติ"> ปกติ
+                        <input type="radio" name="motor_status_${i}" value="ไม่ปกติ"> ไม่ปกติ
+                    </div>
+                </div>`;
+            container.appendChild(div);
+        }
+    }
+
+    // ฟังก์ชันสร้างช่อง Phase Protection
+    function generatePhaseFields() {
+      const qty = document.getElementById('phase_qty').value;
+      const container = document.getElementById('phase_container');
+      container.innerHTML = ''; 
+      if (qty == "1") {
+          const div = document.createElement('div');
+          div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+          div.innerHTML = `
+              <label style="color:#004d99;">ผลการตรวจสอบ Phase Protection</label>
+              <div style="display: flex; gap: 15px; align-items: center;">
+                  <span>สถานะ :</span>
+                  <input type="radio" name="phase_status" value="ปกติ"> ปกติ
+                  <input type="radio" name="phase_status" value="ไม่ปกติ"> ไม่ปกติ
+              </div>`;
+          container.appendChild(div);
+      }
+    }
+
+    // ฟังก์ชันสร้างช่องฟิวส์ + ลูกฟิวส์
+    function generateFuseFields() {
+      const qty = document.getElementById('fuse_qty').value;
+      const container = document.getElementById('fuse_container');
+      container.innerHTML = '';
+      if (qty == "1") {
+          const div = document.createElement('div');
+          div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+          div.innerHTML = `
+              <label style="color:#004d99;">ผลการตรวจสอบ ฟิวส์ + ลูกฟิวส์</label>
+              <div style="display: flex; gap: 15px; align-items: center;">
+                  <span>สถานะ :</span>
+                  <input type="radio" name="fuse_status" value="ปกติ"> ปกติ
+                  <input type="radio" name="fuse_status" value="ไม่ปกติ"> ไม่ปกติ
+              </div>`;
+          container.appendChild(div);
+      }
+    }
+
+    // ฟังก์ชันสร้างช่องแมกเนติก
+    function generateMagneticFields() {
+      const qty = document.getElementById('magnetic_qty').value;
+      const mainStatusContainer = document.getElementById('magnetic_main_status_container');
+      const container = document.getElementById('magnetic_container');
+      
+      // ล้างค่าเก่าออกก่อน
+      mainStatusContainer.innerHTML = '';
+      container.innerHTML = ''; 
+
+      if (qty === "1") {
+          const mainDiv = document.createElement('div');
+          mainDiv.style = "background: #ffffff; padding: 15px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #004d99;";
+          mainDiv.innerHTML = `
+              <label style="color:#004d99; font-weight:bold;">ผลการตรวจสอบแมกเนติก</label>
+              <div style="display: flex; gap: 15px; align-items: center; margin-top: 10px;">
+                  <span>สถานะ :</span>
+                  <input type="radio" name="magnetic_main_status" value="ปกติ"> ปกติ
+                  <input type="radio" name="magnetic_main_status" value="ไม่ปกติ"> ไม่ปกติ
+              </div>
+          `;
+          mainStatusContainer.appendChild(mainDiv);
+
+          const subColor = "#4d82b8";
+          const subLabelColor = "#004d99";
+
+          for (let i = 1; i <= qty; i++) {
+              const div = document.createElement('div');
+              div.style = `background: #fafafa; padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid ${subColor}; margin-left: 10px;`;
+              div.innerHTML = `
+                  <div class="input-group" style="margin-bottom: 15px;">
+                      <label style="color:${subLabelColor}; font-weight:bold; font-size: 14px;">1. ผลตรวจตัวล็อคแมกเนติก (Start-Delta / Inverter)</label>
+                      <select class="mag_lock_select" onchange="toggleRadio(this, 'radio_lock_${i}')" required style="width:100%; padding: 8px;border-radius: 6px; font-size: 14px; border: 1px solid #ccc; margin-top: 5px;">
+                          <option value="" disabled selected hidden>เลือกการติดตั้ง</option>
+                          <option value="ติดตั้ง">ติดตั้ง</option>
+                          <option value="ไม่ติดตั้ง">ไม่ติดตั้ง</option>
+                      </select>
+                      <div id="radio_lock_${i}" style="display:none; margin-top:8px; padding-left:10px; font-size: 14px;">
+                          <span>สถานะ :</span>
+                          <input type="radio" name="mag_lock_status_${i}" value="ปกติ"> ปกติ
+                          <input type="radio" name="mag_lock_status_${i}" value="ไม่ปกติ"> ไม่ปกติ
+                      </div>
+                  </div>
+
+                  <div class="input-group" style="margin-bottom: 5px;">
+                      <label style="color:${subLabelColor}; font-weight:bold; font-size: 14px;">2. ผลตรวจการทำงานแมกเนติก (Start-Delta / Inverter)</label>
+                      <select class="mag_work_select" onchange="toggleRadio(this, 'radio_work_${i}')" required style="width:100%; padding: 8px;border-radius: 6px; font-size: 14px; border: 1px solid #ccc; margin-top: 5px;">
+                          <option value="" disabled selected hidden>เลือกการติดตั้ง</option>
+                          <option value="ติดตั้ง">ติดตั้ง</option>
+                          <option value="ไม่ติดตั้ง">ไม่ติดตั้ง</option>
+                      </select>
+                      <div id="radio_work_${i}" style="display:none; margin-top:8px; padding-left:10px; font-size: 14px;">
+                          <span>สถานะ :</span>
+                          <input type="radio" name="mag_work_status_${i}" value="ปกติ"> ปกติ
+                          <input type="radio" name="mag_work_status_${i}" value="ไม่ปกติ"> ไม่ปกติ
+                      </div>
+                  </div>`;
+              container.appendChild(div);
+          }
+      }
+    }
+
+    // ฟังก์ชันสร้างช่อง Overload
+    function generateOvlFields() {
+        const qty = document.getElementById('ovl_qty').value;
+        const container = document.getElementById('ovl_container');
+        container.innerHTML = '';
+        for (let i = 1; i <= qty; i++) {
+            const div = document.createElement('div');
+            div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+            div.innerHTML = `
+                <label style="color:#004d99;">Overload ตัวที่ ${i}</label>
+                  <div style="display: flex; gap: 15px; align-items: center;">
+                      <span>สถานะ :</span>
+                      <input type="radio" name="ovl_status_${i}" value="ปกติ"> ปกติ
+                      <input type="radio" name="ovl_status_${i}" value="ไม่ปกติ"> ไม่ปกติ
+                  </div>
+                </div>`;
+            container.appendChild(div);
+        }
+    }
+
+    // ฟังก์ชันสร้างช่อง Manual
+    function generateManualFields() {
+        const qty = document.getElementById('manual_qty').value;
+        const container = document.getElementById('manual_container');
+        container.innerHTML = '';
+        for (let i = 1; i <= qty; i++) {
+            const div = document.createElement('div');
+            div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+            div.innerHTML = `
+                <label style="color:#004d99;">Manual ตัวที่ ${i}</label>
+                  <div style="display: flex; gap: 15px; align-items: center;">
+                      <span>สถานะ :</span>
+                      <input type="radio" name="manual_status_${i}" value="ปกติ"> ปกติ
+                      <input type="radio" name="manual_status_${i}" value="ไม่ปกติ"> ไม่ปกติ
+                  </div>
+                </div>`;
+            container.appendChild(div);
+        }
+    }
+
+    // ฟังก์ชันสร้างช่อง Auto
+    function generateAutoFields() {
+        const qty = document.getElementById('auto_qty').value;
+        const container = document.getElementById('auto_container');
+        container.innerHTML = ''; 
+        for (let i = 1; i <= qty; i++) {
+            const div = document.createElement('div');
+            div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+            div.innerHTML = `
+                <label style="color:#004d99;">Auto ตัวที่ ${i}</label>
+                  <div style="display: flex; gap: 15px; align-items: center;">
+                      <span>สถานะ :</span>
+                      <input type="radio" name="auto_status_${i}" value="ปกติ"> ปกติ
+                      <input type="radio" name="auto_status_${i}" value="ไม่ปกติ"> ไม่ปกติ
+                  </div>
+                </div>`;
+            container.appendChild(div);
+        }
+    }
+
+    // ฟังก์ชันสร้างช่อง ทำงาน Inverter
+    function generateInverterFields() {
+      const qty = document.getElementById('inverter_qty').value;
+      const container = document.getElementById('inverter_container');
+      container.innerHTML = '';
+      if (qty == "1") {
+          const div = document.createElement('div');
+          div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+          div.innerHTML = `
+              <label style="color:#004d99;">การทำงาน Inverter</label>
+              <div style="display: flex; gap: 15px; align-items: center;">
+                  <span>สถานะ :</span>
+                  <input type="radio" name="inverter_status" value="ปกติ"> ปกติ
+                  <input type="radio" name="inverter_status" value="ไม่ปกติ"> ไม่ปกติ
+              </div>`;
+          container.appendChild(div);
+      }
+    }
+
+    // ฟังก์ชันสร้างช่อง สถานะหลอด
+    function generateLedFields() {
+      const qty = document.getElementById('led_qty').value;
+      const container = document.getElementById('led_container');
+      container.innerHTML = '';
+      if (qty == "1") {
+          const div = document.createElement('div');
+          div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+          div.innerHTML = `
+              <label style="color:#004d99;">ผลการตรวจสอบแสดงสถานะหลอด</label>
+              <div style="display: flex; gap: 15px; align-items: center;">
+                  <span>สถานะ :</span>
+                  <input type="radio" name="led_status" value="ปกติ"> ปกติ
+                  <input type="radio" name="led_status" value="ไม่ปกติ"> ไม่ปกติ
+              </div>`;
+          container.appendChild(div);
+      }
+    }
+
+    // รายการตรวจสอบ 2
+    // ฟังก์ชันสร้างช่อง Low Level
+    function generateLowlvFields() {
+        const qty = document.getElementById('lowlv_qty').value;
+        const container = document.getElementById('lowlv_container');
+        container.innerHTML = '';
+        for (let i = 1; i <= qty; i++) {
+            const div = document.createElement('div');
+            div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+            div.innerHTML = `
+                <label style="color:#004d99;">ชนิดอุปกรณ์ Low Level</label>
+                <div class="input-group" style="margin-top:10px;">
+                    <input type="text" class="lowlv_input_val" placeholder="ชนิดอุปกรณ์" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span>สถานะ :</span>
+                        <input type="radio" name="lowlv_status" value="ปกติ"> ปกติ
+                        <input type="radio" name="lowlv_status" value="ไม่ปกติ"> ไม่ปกติ
+                    </div>
+                </div>
+
+                <label style="color:#004d99;">การเข้าสายถูกต้อง</label>
+                <div class="input-group" style="margin-top:10px;">
+                    <input type="text" class="lowlv_input_val" placeholder="ชนิดอุปกรณ์" style="width:100%; padding:10px; margin-bottom:10px;">               
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span>สถานะ :</span>
+                        <input type="radio" name="lowlv_status" value="ปกติ"> ปกติ
+                        <input type="radio" name="lowlv_status" value="ไม่ปกติ"> ไม่ปกติ
+                    </div>
+                </div>`;
+            container.appendChild(div);
+        }       
+    }
+
+    // ฟังก์ชันสร้างช่อง High Level
+    function generateHighlvFields() {
+        const qty = document.getElementById('highlv_qty').value;
+        const container = document.getElementById('highlv_container');
+        container.innerHTML = '';
+        for (let i = 1; i <= qty; i++) {
+            const div = document.createElement('div');
+            div.style = "background: #f0f4f8; padding: 15px; border-radius: 10px; margin-top: 15px; margin-bottom: 15px; border-left: 5px solid #004d99;";
+            div.innerHTML = `
+                <label style="color:#004d99;">ชนิดอุปกรณ์ High Level</label>
+                <div class="input-group" style="margin-top:10px;">
+                    <input type="text" class="highlv_input_val" placeholder="ชนิดอุปกรณ์" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span>สถานะ :</span>
+                        <input type="radio" name="lowlv_status" value="ปกติ"> ปกติ
+                        <input type="radio" name="lowlv_status" value="ไม่ปกติ"> ไม่ปกติ
+                    </div>
+                </div>
+
+                <label style="color:#004d99;">การเข้าสายถูกต้อง</label>
+                <div class="input-group" style="margin-top:10px;">
+                    <input type="text" class="highlv_input_val" placeholder="ชนิดอุปกรณ์" style="width:100%; padding:10px; margin-bottom:10px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span>สถานะ :</span>
+                        <input type="radio" name="lowlv_status" value="ปกติ"> ปกติ
+                        <input type="radio" name="lowlv_status" value="ไม่ปกติ"> ไม่ปกติ
+                    </div>
+                </div>`;
+            container.appendChild(div);
+        }
+    }
+
+    // ฟังก์ชันเปิด-ปิดการแสดง Radio button
+    function toggleRadio(selectElement, targetId) {
+        const radioDiv = document.getElementById(targetId);
+        if (selectElement.value === "ติดตั้ง") {
+            radioDiv.style.display = "block";
+        } else {
+            radioDiv.style.display = "none";
+        }
+    }
+
+    // --- ส่วนจัดการ Canvas (คงเดิมไว้ตามของคุณ) ---
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        ctx.scale(ratio, ratio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    const getPos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left,
+            y: (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top
+        };
+    };
+    const start = (e) => { drawing = true; ctx.beginPath(); const pos = getPos(e); ctx.moveTo(pos.x, pos.y); e.preventDefault(); };
+    const draw = (e) => { if (!drawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); e.preventDefault(); };
+    const end = () => { drawing = false; };
+    canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', draw); window.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start); canvas.addEventListener('touchmove', draw); canvas.addEventListener('touchend', end);
+    document.getElementById('clear').onclick = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // --- ส่วนเก็บข้อมูลส่งไป Google Sheets / Docs ---
+    document.getElementById('save').onclick = () => {
+        // ดึงค่าพื้นฐาน
+        const project = document.getElementById('project').value;
+        const date = document.getElementById('date').value;
+        const fromNo = document.getElementById('fromNo').value;
+        const boqNo = document.getElementById('boqNo').value;
+        const productNo = document.getElementById('productNo').value;
+
+        // --- ส่วนที่เพิ่มใหม่: ดึงข้อมูลปั๊มและมอเตอร์ ---
+        const pumpTypeSelect = document.getElementById('pump_qty');
+        const pumpType = pumpTypeSelect.options[pumpTypeSelect.selectedIndex].text; // ดึงเป็นชื่อภาษาไทยออกมา
+
+        const motorType = document.getElementById('motortype').value;
+        
+        // ดึงค่า kw และบังคับทศนิยม 2 ตำแหน่งตามที่ตั้งค่าไว้
+        const motorKwInput = document.getElementById('motorkw').value;
+        const motorKw = motorKwInput ? parseFloat(motorKwInput).toFixed(2) : "0.00";
+
+        const motorSpeedSelect = document.getElementById('motorspeed_qty');
+        const motorSpeed = motorSpeedSelect.options[motorSpeedSelect.selectedIndex].text;
+
+        const type_product = document.getElementById('type_product').value;
+
+        const designRadio = document.querySelector('input[name="design"]:checked');
+        const design = designRadio ? designRadio.value : null;
+
+        const footletrod_count = document.getElementById('footletrod_count').value;
+        const footlethead_count = document.getElementById('footlethead_count').value;
+        const footletjoint_count = document.getElementById('footletjoint_count').value;
+        const float_count = document.getElementById('float_count').value;
+        const cup_type = document.getElementById('cup_type').value;
+        const cup_count = document.getElementById('cup_count').value;
+
+        const check1Radio = document.querySelector('input[name="check1"]:checked');
+        const check1 = check1Radio ? check1Radio.value : null;
+
+        const check2Radio = document.querySelector('input[name="check2"]:checked');
+        const check2 = check2Radio ? check2Radio.value : null;
+
+        const check3Radio = document.querySelector('input[name="check3"]:checked');
+        const check3 = check3Radio ? check3Radio.value : null;
+
+        const check4Radio = document.querySelector('input[name="check4"]:checked');
+        const check4 = check4Radio ? check4Radio.value : null;
+
+        const check5Radio = document.querySelector('input[name="check5"]:checked');
+        const check5 = check5Radio ? check5Radio.value : null;
+
+        const check6Radio = document.querySelector('input[name="check6"]:checked');
+        const check6 = check6Radio ? check6Radio.value : null;
+
+        // 1. ตรวจสอบข้อมูลพื้นฐาน
+        if (!project) { alert("กรุณากรอกชื่อลูกค้า / โครงการ"); return; }
+        if (!date) { alert("กรุณากรอกวันที่"); return; }
+        if (!fromNo) { alert("กรุณากรอกเลขที่แบบ"); return; }
+        if (!boqNo) { alert("กรุณากรอกเลข BOQ"); return; }
+        if (!productNo) { alert("กรุณากรอกเลขที่สินค้า"); return; }
+
+        // 2. ตรวจสอบเบรกเกอร์
+        const bQty = document.getElementById('breaker_qty').value;
+        if (bQty === "") { alert("กรุณาเลือกจำนวนเบรกเกอร์"); return; }
+        let bDetail = "ไม่ติดตั้ง";
+        if (bQty > 0) {
+            const vals = document.getElementsByClassName('breaker_input_val');
+            let det = [];
+            for (let i = 0; i < bQty; i++) {
+                const radio = document.querySelector(`input[name="breaker_status_${i+1}"]:checked`);
+                if (!vals[i].value) { alert(`กรุณากรอกค่า A ของเบรกเกอร์`); return; }
+                if (!radio) { alert(`กรุณาเลือกสถานะเบรกเกอร์`); return; }
+                det.push(`ตัวที่ ${i+1} : ${vals[i].value} A (${radio.value})`);
+            }
+            bDetail = det.join(" | ");
+        }
+
+        // 3. ตรวจสอบมอเตอร์เบรกเกอร์
+        const mQty = document.getElementById('motor_qty').value;
+        if (mQty === "") { alert("กรุณาเลือกจำนวนมอเตอร์เบรกเกอร์"); return; }
+        let mDetail = "ไม่ติดตั้ง";
+        if (mQty > 0) {
+            const vals = document.getElementsByClassName('motor_input_val');
+            let det = [];
+            for (let i = 0; i < mQty; i++) {
+                const radio = document.querySelector(`input[name="motor_status_${i+1}"]:checked`);
+                if (!vals[i].value) { alert(`กรุณากรอกค่า A ของมอเตอร์เบรกเกอร์`); return; }
+                if (!radio) { alert(`กรุณาเลือกสถานะมอเตอร์เบรกเกอร์`); return; }
+                det.push(`ตัวที่ ${i+1} : ${vals[i].value} A (${radio.value})`);
+            }
+            mDetail = det.join(" | ");
+        }
+
+        // 4. ตรวจสอบ Phase Protection
+        const pQty = document.getElementById('phase_qty').value;
+        if (pQty === "") { alert("กรุณาเลือกการติดตั้ง Phase Protection"); return; }
+        let pDetail = "ไม่ติดตั้ง";
+        if (pQty == "1") {
+            const radio = document.querySelector('input[name="phase_status"]:checked');
+            if (!radio) { alert("กรุณาเลือกผลการตรวจสอบ Phase Protection"); return; }
+            pDetail = `ติดตั้ง (${radio.value})`;
+        }
+
+        // 5. ตรวจสอบ Fuse
+        const fQty = document.getElementById('fuse_qty').value;
+        if (fQty === "") { alert("กรุณาเลือกการติดตั้ง ฟิวส์ + ลูกฟิวส์"); return; }
+        let fDetail = "ไม่ติดตั้ง";
+        if (fQty == "1") {
+            const radio = document.querySelector('input[name="fuse_status"]:checked');
+            if (!radio) { alert("กรุณาเลือกผลการตรวจสอบ ฟิวส์ + ลูกฟิวส์"); return; }
+            fDetail = `ติดตั้ง (${radio.value})`;
+        }
+
+        // 6. ตรวจสอบ Magnetic
+        const magQty = document.getElementById('magnetic_qty').value;
+        if (magQty === "") { alert("กรุณาเลือกการติดตั้งแมกเนติก"); return; }
+        let magDetail = "ไม่ติดตั้ง";
+        if (magQty == "1") {
+            const radio = document.querySelector('input[name="magnetic_status"]:checked');
+            let details = [];
+            const lockSelects = document.querySelectorAll('.mag_lock_select');
+            const workSelects = document.querySelectorAll('.mag_work_select');
+
+            for (let i = 1; i <= magQty; i++) {
+                const lockType = lockSelects[i-1].value;
+                const workType = workSelects[i-1].value;
+
+                if (!lockType) { alert(`กรุณาเลือก'ตัวล็อคแมกเนติก ระบบ Star-delta และ Inverter' ติดตั้งหรือไม่`); return; }
+                if (!workType) { alert(`กรุณาเลือก'การทำงานแมกเนติก ระบบ Star-delta และ Inverter' ติดตั้งหรือไม่`); return; }
+
+                let lockResult = lockType;
+                let workResult = workType;
+
+                if (lockType === "ติดตั้ง") {
+                    const radio = document.querySelector(`input[name="mag_lock_status_${i}"]:checked`);
+                    if (!radio) { alert(`กรุณาติ๊กผลตรวจ 'ตัวล็อคแมกเนติก ระบบ Star-delta และ Inverter'`); return; }
+                    lockResult = `ติดตั้ง(${radio.value})`;
+                }
+                if (workType === "ติดตั้ง") {
+                    const radio = document.querySelector(`input[name="mag_work_status_${i}"]:checked`);
+                    if (!radio) { alert(`กรุณาติ๊กผลตรวจ 'การทำงานแมกเนติก ระบบ Star-delta และ Inverter'`); return; }
+                    workResult = `ติดตั้ง(${radio.value})`;
+                }      
+                details.push(`ติดตั้ง (${radio.value}) : ตัวล็อค = ${lockResult}, การทำงาน = ${workResult}`);
+            }
+            magDetail = details.join(" | ");
+        }
+
+        // 7. ตรวจสอบ Overload
+        const ovlQty = document.getElementById('ovl_qty').value;
+        if (ovlQty === "") { alert("กรุณาเลือกจำนวน Overload"); return; }
+        let overloadDetail = "ไม่ติดตั้ง";
+        if (ovlQty > 0) {
+            const vals = document.getElementsByClassName('ovl_input_val');
+            let det = [];
+            for (let i = 0; i < ovlQty; i++) {
+                const radio = document.querySelector(`input[name="ovl_status_${i+1}"]:checked`);
+                if (!radio) { alert(`กรุณาเลือกสถานะ Overload`); return; }
+                det.push(`ตัวที่ ${i+1} : ${vals[i].value} A (${radio.value})`);
+            }
+            overloadDetail = det.join(" | ");
+        }
+
+        // 8. ตรวจสอบ Manual
+        const manualQty = document.getElementById('manual_qty').value;
+        if (manualQty === "") { alert("กรุณาเลือกจำนวน Manual"); return; }
+        let manualDetail = "ไม่ติดตั้ง";
+        if (manualQty > 0) {
+            const vals = document.getElementsByClassName('manual_input_val');
+            let det = [];
+            for (let i = 0; i < manualQty; i++) {
+                const radio = document.querySelector(`input[name="manual_status_${i+1}"]:checked`);
+                if (!radio) { alert(`กรุณาเลือกสถานะ Manual`); return; }
+                det.push(`ตัวที่ ${i+1} : ${radio.value}`);
+            }
+            manualDetail = det.join(" | ");
+        }
+
+        // 9. ตรวจสอบ Auto
+        const autoQty = document.getElementById('auto_qty').value;
+        if (autoQty === "") { alert("กรุณาเลือกจำนวน Auto"); return; }
+        let autoDetail = "ไม่ติดตั้ง";
+        if (autoQty > 0) {
+            const vals = document.getElementsByClassName('auto_input_val');
+            let det = [];
+            for (let i = 0; i < autoQty; i++) {
+                const radio = document.querySelector(`input[name="auto_status_${i+1}"]:checked`);
+                if (!radio) { alert(`กรุณาเลือกสถานะ Auto`); return; }
+                det.push(`ตัวที่ ${i+1} : ${radio.value}`);
+            }
+            autoDetail = det.join(" | ");
+        }
+
+        // 10. ตรวจสอบ Inverter
+        const inverterQty = document.getElementById('inverter_qty').value;
+        if (inverterQty === "") { alert("กรุณาเลือกการติดตั้ง Inverter"); return; }
+        let inverterDetail = "ไม่ติดตั้ง";
+        if (inverterQty == "1") {
+            const radio = document.querySelector('input[name="inverter_status"]:checked');
+            if (!radio) { alert("กรุณาเลือกผลตรวจการทำงาน Inverter"); return; }
+            inverterDetail = `ติดตั้ง (${radio.value})`;
+        }
+
+        // 11. ตรวจสอบ Led
+        const ledQty = document.getElementById('led_qty').value;
+        if (ledQty === "") { alert("กรุณาเลือกการติดตั้งหลอด"); return; }
+        let ledDetail = "ไม่ติดตั้ง";
+        if (ledQty == "1") {
+            const radio = document.querySelector('input[name="led_status"]:checked');
+            if (!radio) { alert("กรุณาเลือกผลตรวจสถานะหลอด"); return; }
+            ledDetail = `ติดตั้ง (${radio.value})`;
+        }
+
+        // 12. ตรวจสอบ Low Level
+        const lowlvQty = document.getElementById('lowlv_qty').value;
+        if (lowlvQty === "") { alert("กรุณาเลือกการตรวจสอบ Low Level ถังพักทางด้านดูด"); return; }
+        let lowlvDetail = "ไม่ติดตั้ง";
+        if (lowlvQty == "1") {
+            const radio = document.querySelector('input[name="lowlv_status"]:checked');
+            if (!radio) { alert("กรุณาเลือกผลตรวจสอบ Low Level ถังพักทางด้านดูด"); return; }
+            lowlvDetail = `ติดตั้ง (${radio.value})`;
+        }
+
+        // 13. ตรวจสอบ High Level
+        const highlvQty = document.getElementById('highlv_qty').value;
+        if (highlvQty === "") { alert("กรุณาเลือกการตรวจสอบ High Level ถังพักทางด้านจ่าย"); return; }
+        let highlvDetail = "ไม่ติดตั้ง";
+        if (highlvQty == "1") {
+            const radio = document.querySelector('input[name="highlv_status"]:checked');
+            if (!radio) { alert("กรุณาเลือกผลตรวจสอบ High Level ถังพักทางด้านจ่าย"); return; }
+            highlvDetail = `ติดตั้ง (${radio.value})`;
+        }
+
+        // ตรวจสอบลายเซ็น
+        const signature = canvas.toDataURL();
+        // ถ้า Canvas ว่างเปล่า ความยาว DataURL จะสั้นมาก (ประมาณ 1000-2000 ตัวอักษร)
+        if (signature.length < 2000) {
+            alert("กรุณาลงชื่อผู้ตรวจสอบในช่องลายเซ็น");
+            return;
+        }
+
+        if (!status) { alert("กรุณาเลือกผลการตรวจเช็คตู้ (ผ่าน/ไม่ผ่าน)"); return; }
+
+        // เริ่มต้นการส่งข้อมูล
+        document.getElementById('save').innerText = "กำลังส่ง...";
+        document.getElementById('save').disabled = true;
+
+        google.script.run.withSuccessHandler(msg => {
+            alert(msg);
+            location.reload();
+        }).processForm({
+            project: project,
+            date: date,
+            fromNo: fromNo,
+            boqNo: boqNo,
+            productNo: productNo,
+            pumpType: pumpType,
+            motorType: motorType,
+            motorKw: motorKw,
+            motorSpeed: motorSpeed,
+            breakerDetail: bDetail,
+            motorDetail: mDetail,
+            phaseDetail: pDetail,
+            fuseDetail: fDetail,
+            magneticDetail: magDetail,
+            overloadDetail: overloadDetail,
+            manualDetail: manualDetail,
+            autoDetail: autoDetail,
+            inverterDetail: inverterDetail,
+            ledDetail: ledDetail,
+            lowlvDetail: lowlvDetail,
+            highlvDetail:highlvDetail,
+            type_product: type_product,
+            design: design,
+            status: status,
+            check1: check1,
+            check2: check2,
+            check3: check3,
+            check4: check4,
+            check5: check5,
+            check6: check6,
+            footletrod_count: footletrod_count,
+            footlethead_count: footlethead_count,
+            footletjoint_count: footletjoint_count,
+            float_count: float_count,
+            cup_type: cup_type,
+            cup_count: cup_count,
+            signature: signature
+        });
+    };
+  </script>
